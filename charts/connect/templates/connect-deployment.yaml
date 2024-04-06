@@ -48,6 +48,10 @@ spec:
           secret:
             secretName: {{ .Values.connect.tls.secret }}
         {{- end }}
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
       tolerations:
 {{ toYaml .Values.connect.tolerations | indent 8 }}
       containers:
@@ -58,6 +62,12 @@ spec:
             runAsUser: 999
             runAsGroup: 999
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
           resources:
             {{- toYaml .Values.connect.api.resources | nindent 12 }}
           env:
@@ -120,6 +130,12 @@ spec:
             runAsUser: 999
             runAsGroup: 999
             allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
           resources:
             {{- toYaml .Values.connect.sync.resources | nindent 12 }}
           env:
